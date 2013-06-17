@@ -1,0 +1,140 @@
+#http://i-tools.org/unserialize to convert to JSON
+#then add a newline in front of each "{" and after each ","
+setup:
+  chain name: MainDoorDroidChain
+  chain domain: Avatars
+  wildcard marker: '%'
+  constant marker: '#'
+activation:
+  touch:
+    select:
+      attributes:
+      - IC Title
+      - IC Name
+      checks:
+      - attribute: itemName()
+        operator: =
+        value: '#id'
+    headers:
+      100: I haven't seen you before...
+    next chainpos: 100
+questions:
+  100:
+    question ic: What is your name? I will ask your title next. Lying to the Sith
+      is not recommended.
+    question ooc: ((Type your character name without a title, like Darth for example.))
+    next chainpos: 101
+  101:
+    question ic: That is your name?
+    question ooc: ((Press refuse if you are ICly refusing to give your name.))
+    buttons:
+      "Yes":
+        actions:
+          save:
+            domain: Avatars
+            attributes: IC Name
+            value: '#previous_answer'
+      "No":
+        next chainpos: 100
+        header: 'I see well... lets try that again shall we? '
+      Refuse:
+        next chainpos: 105
+        header: A stubborn one eh?
+    next chainpos: 200
+  105:
+    question ic: The Sith demand an answer. You will not be permitted without one.
+      Do you still refuse?
+    question ooc: ((Are you sure you want to offer a refusal to answer ICly?))
+    buttons:
+      "Yes":
+        actions:
+          save:
+            domain: Avatars
+            attributes: IC Name
+            value: '#previous_answer'
+        header: 'Well then. '
+      "No":
+        next chainpos: 100
+        header: 'I knew you could be reasonable. '
+    next chainpos: 106
+  106:
+    question ic: The Academy does not admit refuse. Or do you have something against
+      answering to droids? Sounds like a personal issue. Good day.
+    question ooc: ((You ICly refused to answer at some point in the past, and now
+      the droid won't let you in. Contact a sim admin if you feel there's been a mistake.))
+    domain: text
+    attributes: text
+    buttons:
+      Whatever: []
+  200:
+    question ic: What is your title, if any?
+    question ooc: ((Select from the list or select 'other' to type in your title.))
+    domain: text
+    attributes: text
+    buttons:
+      Darth:
+        header: 'A Darth? If you say so. '
+      Master:
+        header: 'Ah, finally, a Master. '
+      'Dark Lord ':
+        header: 'Dark Lord eh? And I''m Revan. '
+      Dark Lady:
+        header: 'M''Lady. '
+      Other/None:
+        next chainpos: 202
+    next chainpos: 201
+  201:
+    question ic: Is this information correct?
+    question ooc: ""
+    buttons:
+      "Yes":
+        actions:
+          save:
+            domain: Avatars
+            attributes: IC Title
+            value: '#previous_answer'
+      "No":
+        next chainpos: 200
+      Refuse:
+        next chainpos: 205
+    next chainpos: 208
+  202:
+    question ic: Enter your title.
+    question ooc: ((For none, just leave blank. Make sure to capitalize correctly.))
+    next chainpos: 201
+  205:
+    question ic: The Sith do not look kindly upon refuse.
+    question ooc: ((Are you sure you want to offer a refusal to answer ICly?))
+    buttons:
+      "Yes": []
+      "No":
+        next chainpos: 200
+    next chainpos: 206
+  206:
+    question ic: The Academy does not admit refuse. Or do you have something against
+      answering to droids? Sounds like a personal issue. Good day.
+    question ooc: ((You previously refused to answer a question ICly. To undo this
+      decision you'll have to speak with a sim admin.))
+    buttons:
+      Whatever...: []
+  207:
+    question ic: Welcome back,%IC Title%%IC Name%. I am recognizing you correctly,
+      right?
+    question ooc: ((If you have changed characters on this av, or changed your char
+      name or title, say no.))
+    buttons:
+      "Yes": []
+      "No":
+        next chainpos: 100
+    next chainpos: 208
+  208:
+    question ic: Welcome to the Sith'ari Academy. I will tell my Masters that you
+      have arrived...
+    question ooc: ((You may enter. Please observe the Academy's IC rules.))
+    buttons:
+      Open:
+        actions:
+          regionsay:
+            message: MainDoorOpen
+    	  im:
+            message: '%IC Name% ((#id)) has entered the temple.'
