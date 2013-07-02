@@ -16,6 +16,7 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set('address', process.env.OPENSHIFT_NODEJS_IP);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.set('json spaces',0);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
