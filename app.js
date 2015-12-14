@@ -31,7 +31,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.post('/', routes.index);
+app.get('/', routes.index)
+app.post('/convert', routes.index);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), app.get('address'), function(){
